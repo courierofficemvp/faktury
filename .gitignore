@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+tmp_uploads/
+.env
+token.json
+credentials.json
+.DS_Store
+bot/service_account.json
+bot/service_account.json
+token.json
+credentials.json
