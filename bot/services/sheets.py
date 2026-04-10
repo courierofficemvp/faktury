@@ -3,6 +3,10 @@ from googleapiclient.discovery import build
 import os
 
 
+# ✅ ВОТ ЭТО ВАЖНО
+STATUS_NEW = "NEW"
+
+
 class SheetsService:
     def __init__(self):
         creds = Credentials.from_service_account_file(
