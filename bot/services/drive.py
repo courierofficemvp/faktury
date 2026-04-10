@@ -16,8 +16,14 @@ class DriveService:
         return build("drive", "v3", credentials=creds)
 
     def upload_file(self, file_path: str, filename: str):
-        print("UPLOAD START:", file_path, filename)
-        print("FOLDER ID:", self.folder_id)
+        print("DRIVE: upload start")
+        print("DRIVE: file_path =", file_path)
+        print("DRIVE: filename =", filename)
+        print("DRIVE: folder_id =", self.folder_id)
+
+        if not self.folder_id:
+            raise ValueError("GOOGLE_DRIVE_FOLDER_ID is empty")
+
         service = self._get_service()
 
         file_metadata = {
@@ -27,10 +33,13 @@ class DriveService:
 
         media = MediaFileUpload(file_path, resumable=True)
 
-        file = service.files().create(
+        created = service.files().create(
             body=file_metadata,
             media_body=media,
-            fields="id"
+            fields="id, webViewLink, name"
         ).execute()
 
-        return file.get("id")
+        print("DRIVE: upload success =", created)
+
+        link = created.get("webViewLink") or f"https://drive.google.com/file/d/{created['id']}/view"
+        return link, created.get("name", filename)
