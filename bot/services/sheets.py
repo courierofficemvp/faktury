@@ -3,45 +3,37 @@ from googleapiclient.discovery import build
 import os
 
 
-# ✅ ВОТ ЭТО ВАЖНО
 STATUS_NEW = "NEW"
 
 
 class SheetsService:
     def __init__(self):
+        self.sheet_id = os.getenv("GOOGLE_SHEET_ID")
+
+    def _get_service(self):
         creds = Credentials.from_service_account_file(
             "credentials.json",
             scopes=["https://www.googleapis.com/auth/spreadsheets"]
         )
-
-        self.service = build("sheets", "v4", credentials=creds)
-        self.sheet_id = os.getenv("GOOGLE_SHEET_ID")
+        return build("sheets", "v4", credentials=creds)
 
     def add_invoice(self, values: list):
         print("SHEETS WRITE START")
 
-        body = {
-            "values": [values]
-        }
+        service = self._get_service()
 
-        self.service.spreadsheets().values().append(
+        body = {"values": [values]}
+
+        service.spreadsheets().values().append(
             spreadsheetId=self.sheet_id,
             range="A1",
             valueInputOption="RAW",
             body=body
         ).execute()
 
-    def get_due_reminders(self, days_threshold: int = 7):
-        try:
-            return []
-        except Exception as e:
-            print(f"Error in get_due_reminders: {e}")
-            return []
-
     def get_total_refund_for_user(self, user_id: int):
-        """
-        Заглушка — позже можно считать из таблицы
-        """
         print(f"GET TOTAL REFUND FOR USER: {user_id}")
         return 0
 
+    def get_due_reminders(self, days_threshold: int = 7):
+        return []

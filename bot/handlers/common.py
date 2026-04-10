@@ -1,3 +1,8 @@
+from bot.services.sheets import SheetsService
+
+def get_sheets():
+    return SheetsService()
+
 from __future__ import annotations
 
 import os
@@ -17,7 +22,7 @@ from bot.services.drive import DriveService
 
 
 router = Router()
-sheets_service = SheetsService()
+# sheets_service removed
 drive_service = DriveService()
 
 TMP_DIR = Path("tmp_uploads")
@@ -236,7 +241,7 @@ async def process_file(message: Message, state: FSMContext):
         upload_name = f"{message.from_user.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file_name}"
         link, _ = drive_service.upload_file(str(local_path), upload_name)
 
-        sheets_service.add_invoice(
+        get_sheets().add_invoice(
             invoice_date=data.get("invoice_date"),
             brutto=data.get("brutto"),
             vat=data.get("vat"),
@@ -255,7 +260,7 @@ async def process_file(message: Message, state: FSMContext):
 
         await state.clear()
 
-        total = sheets_service.get_total_refund_for_user(message.from_user.id)
+        total = get_sheets().get_total_refund_for_user(message.from_user.id)
 
         await message.answer(
             f"Фактура сохранена ✅\n\n"
@@ -284,8 +289,8 @@ async def process_file_invalid(message: Message, state: FSMContext):
 
 @router.message(F.text.contains("💰"))
 async def refund_info(message: Message):
-    total = sheets_service.get_total_refund_for_user(message.from_user.id)
-    count = len(sheets_service.get_user_invoices(message.from_user.id, only_unprocessed=True))
+    total = get_sheets().get_total_refund_for_user(message.from_user.id)
+    count = len(get_sheets().get_user_invoices(message.from_user.id, only_unprocessed=True))
 
     await message.answer(
         f"Нерассчитанных фактур: {count}\nК возврату: {total:.2f} zł",
@@ -295,7 +300,7 @@ async def refund_info(message: Message):
 
 @router.message(F.text == "📄 Мои фактуры")
 async def my_invoices(message: Message):
-    invoices = sheets_service.get_user_invoices(message.from_user.id)
+    invoices = get_sheets().get_user_invoices(message.from_user.id)
 
     if not invoices:
         await message.answer(
@@ -325,8 +330,8 @@ async def my_invoices(message: Message):
 
 @router.message(F.text == "✅ Рассчитать фактуры")
 async def calculate_all(message: Message):
-    count = sheets_service.mark_user_invoices_calculated(message.from_user.id)
-    total = sheets_service.get_total_refund_for_user(message.from_user.id)
+    count = get_sheets().mark_user_invoices_calculated(message.from_user.id)
+    total = get_sheets().get_total_refund_for_user(message.from_user.id)
 
     await message.answer(
         f"Рассчитано фактур: {count}\nТекущий баланс: {total:.2f} zł",
