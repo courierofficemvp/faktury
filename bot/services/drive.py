@@ -6,15 +6,18 @@ import os
 
 class DriveService:
     def __init__(self):
+        self.folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+
+    def _get_service(self):
         creds = Credentials.from_service_account_file(
             "credentials.json",
             scopes=["https://www.googleapis.com/auth/drive"]
         )
-
-        self.service = build("drive", "v3", credentials=creds)
-        self.folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+        return build("drive", "v3", credentials=creds)
 
     def upload_file(self, file_path: str, filename: str):
+        service = self._get_service()
+
         file_metadata = {
             "name": filename,
             "parents": [self.folder_id]
@@ -22,7 +25,7 @@ class DriveService:
 
         media = MediaFileUpload(file_path, resumable=True)
 
-        file = self.service.files().create(
+        file = service.files().create(
             body=file_metadata,
             media_body=media,
             fields="id"
