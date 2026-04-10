@@ -30,7 +30,9 @@ class SheetsService:
         self.service = build('sheets', 'v4', credentials=creds)
         self.sheet_id = os.getenv("GOOGLE_SHEET_ID")
 
-    def add_invoice(self, **kwargs):
+    def add_invoice
+        print("SHEETS WRITE START")
+(self, **kwargs):
         status = kwargs.get("status") or STATUS_NEW
 
         values = [[

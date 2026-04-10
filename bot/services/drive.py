@@ -16,6 +16,8 @@ class DriveService:
         return build("drive", "v3", credentials=creds)
 
     def upload_file(self, file_path: str, filename: str):
+        print("UPLOAD START:", file_path, filename)
+        print("FOLDER ID:", self.folder_id)
         service = self._get_service()
 
         file_metadata = {
