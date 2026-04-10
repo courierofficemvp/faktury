@@ -1,17 +1,23 @@
+from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from google.oauth2.credentials import Credentials
 import os
+
 
 class DriveService:
     def __init__(self):
-        creds = Credentials.from_authorized_user_file('token.json')
-        self.service = build('drive', 'v3', credentials=creds)
+        creds = Credentials.from_service_account_file(
+            "credentials.json",
+            scopes=["https://www.googleapis.com/auth/drive"]
+        )
 
-    def upload_file(self, file_path, filename):
+        self.service = build("drive", "v3", credentials=creds)
+        self.folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+
+    def upload_file(self, file_path: str, filename: str):
         file_metadata = {
-            'name': filename,
-            'parents': [os.getenv("GOOGLE_DRIVE_FOLDER_ID")]
+            "name": filename,
+            "parents": [self.folder_id]
         }
 
         media = MediaFileUpload(file_path, resumable=True)
@@ -19,7 +25,7 @@ class DriveService:
         file = self.service.files().create(
             body=file_metadata,
             media_body=media,
-            fields='id, webViewLink'
+            fields="id"
         ).execute()
 
-        return file.get('webViewLink'), filename
+        return file.get("id")
