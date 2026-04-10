@@ -37,3 +37,11 @@ class SheetsService:
         except Exception as e:
             print(f"Error in get_due_reminders: {e}")
             return []
+
+    def get_total_refund_for_user(self, user_id: int):
+        """
+        Заглушка — позже можно считать из таблицы
+        """
+        print(f"GET TOTAL REFUND FOR USER: {user_id}")
+        return 0
+
