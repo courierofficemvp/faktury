@@ -1,9 +1,15 @@
+
+from __future__ import annotations
 from bot.services.sheets import SheetsService
 
 def get_sheets():
     return SheetsService()
 
-from __future__ import annotations
+from bot.services.sheets import SheetsService
+
+def get_sheets():
+    return SheetsService()
+
 
 import os
 from decimal import Decimal, ROUND_HALF_UP
@@ -17,7 +23,6 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
 
 from bot.handlers.keyboard import get_keyboard, get_vat_keyboard, get_date_keyboard
-from bot.services.sheets import SheetsService, STATUS_NEW
 from bot.services.drive import DriveService
 
 
