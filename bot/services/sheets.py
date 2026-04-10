@@ -114,3 +114,15 @@ class SheetsService:
                 continue
 
         return updated
+
+    def get_due_reminders(self, days_threshold: int = 7):
+        """
+        Возвращает список фактур для напоминаний (заглушка)
+        """
+        try:
+            # тут позже можно сделать реальную логику
+            return []
+        except Exception as e:
+            print(f"Error in get_due_reminders: {e}")
+            return []
+
